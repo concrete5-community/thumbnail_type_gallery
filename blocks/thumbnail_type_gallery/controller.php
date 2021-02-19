@@ -3,7 +3,7 @@
 namespace Concrete\Package\ThumbnailTypeGallery\Block\ThumbnailTypeGallery;
 
 use A3020\ThumbnailTypeGallery\FileSet;
-use A3020\ThumbnailTypeGallery\Images;
+use A3020\ThumbnailTypeGallery\ListFactory;
 use A3020\ThumbnailTypeGallery\ThumbType;
 use Concrete\Core\Application\Application;
 use Concrete\Core\Asset\AssetList;
@@ -16,7 +16,7 @@ class Controller extends BlockController
     protected $btTable = 'btThumbnailTypeGallery';
     protected $btExportTables = ['btThumbnailTypeGallery'];
     protected $btInterfaceWidth = '500';
-    protected $btInterfaceHeight = '475';
+    protected $btInterfaceHeight = '550';
     protected $btWrapperClass = 'ccm-ui';
     protected $btCacheBlockRecord = true;
     protected $btCacheBlockOutput = true;
@@ -39,6 +39,9 @@ class Controller extends BlockController
 
     /** @var int */
     protected $styling;
+
+    /** @var int */
+    protected $items_per_page;
 
     /** @var Application */
     protected $appInstance;
@@ -73,21 +76,19 @@ class Controller extends BlockController
     {
         $this->set('c', Page::getCurrentPage());
 
-        /** @var ThumbType $thumbType */
-        $thumbType = $this->appInstance->make(ThumbType::class);
-
-        $small = $thumbType->getById($this->small_thumbnail_type_id);
-        $large = $thumbType->getById($this->large_thumbnail_type_id);
-
-        if (!$small || !$large) {
+        $list = $this->getList();
+        if (!$list) {
             return;
         }
 
-        /** @var Images $images */
-        $images = $this->appInstance->make(Images::class);
+        $pagination = $list->getPagination();
 
-        $this->set('hasImages', $images->has($this->file_set_id));
-        $this->set('images', $images->get($this->file_set_id, $small, $large));
+        $this->set('hasImages', (bool) $list->getTotalResults());
+        $this->set('images', $pagination->getCurrentPageResults());
+
+        if ($pagination->haveToPaginate()) {
+            $this->set('pagination', $pagination->renderDefaultView());
+        }
     }
 
     public function save($args)
@@ -162,5 +163,41 @@ class Controller extends BlockController
         $this->set('fileSetOptions', $fileSet->getSelectOptions());
         $this->set('smallThumbnailTypeOptions', $thumbType->getSelectOptions());
         $this->set('largeThumbnailTypeOptions', $thumbType->getSelectOptions());
+    }
+
+    /**
+     * @return int
+     */
+    protected function getItemsPerPage()
+    {
+        $max = (int) $this->items_per_page;
+
+        return $max ? $max : 100;
+    }
+
+    /**
+     * @return \A3020\ThumbnailTypeGallery\ImageList|void
+     */
+    private function getList()
+    {
+        /** @var ThumbType $thumbType */
+        $thumbType = $this->appInstance->make(ThumbType::class);
+
+        $small = $thumbType->getById($this->small_thumbnail_type_id);
+        $large = $thumbType->getById($this->large_thumbnail_type_id);
+
+        if (!$small || !$large) {
+            return;
+        }
+
+        /** @var ListFactory $factory */
+        $factory = $this->appInstance->make(ListFactory::class);
+
+        $list = $factory->make($this->file_set_id);
+        $list->setThumbnailTypeSmall($small);
+        $list->setThumbnailTypeLarge($large);
+        $list->setItemsPerPage($this->getItemsPerPage());
+
+        return $list;
     }
 }

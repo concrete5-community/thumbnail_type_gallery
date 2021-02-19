@@ -25,5 +25,8 @@
         <field name="styling" type="integer">
             <default value="0"/>
         </field>
+        <field name="items_per_page" type="integer">
+            <default value="100"/>
+        </field>
     </table>
 </schema>

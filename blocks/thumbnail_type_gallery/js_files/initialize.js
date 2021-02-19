@@ -1,6 +1,6 @@
 $('.js-thumbnail-type-gallery').each(function () {
     $(this).magnificPopup({
-        delegate: 'a',
+        delegate: '.ttg-images a',
         type: 'image',
         mainClass: 'mfp-img-mobile',
         image: {

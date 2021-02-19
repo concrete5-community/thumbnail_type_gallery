@@ -1,4 +1,4 @@
-.thumbnail-type-gallery {
+.thumbnail-type-gallery .ttg-images {
     display: flex;
     flex-wrap: wrap;
     margin-left: -5px;

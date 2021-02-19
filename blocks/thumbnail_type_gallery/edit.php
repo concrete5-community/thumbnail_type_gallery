@@ -79,3 +79,13 @@ if (count($fileSetOptions) === 0) {
         </label>
     </div>
 </div>
+
+
+<div class="form-group">
+    <?php
+    echo $form->label('items_per_page', t('Maximum number of thumnails per page'));
+    echo $form->number('items_per_page', $items_per_page, [
+        'placeholder' => 100,
+    ])
+    ?>
+</div>

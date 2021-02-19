@@ -18,20 +18,34 @@ if (!$hasImages) {
 ?>
 
 <div class="js-thumbnail-type-gallery thumbnail-type-gallery <?php echo $bID; ?>">
-    <?php
-    foreach ($images as $image) {
+    <div class="ttg-images">
+        <?php
+        foreach ($images as $image) {
+            ?>
+            <a class="item" href="<?php echo $image->getUrlLarge(); ?>"
+               <?php
+               if ($show_captions) {
+                   echo 'title="'.h($image->getCaption()).'"';
+               }
+               ?>>
+                <div class="image">
+                    <img src="<?php echo $image->getUrlSmall() ?>"
+                         alt="<?php echo h($image->getAlt()); ?>"/>
+                </div>
+            </a>
+            <?php
+        }
         ?>
-        <a class="item" href="<?php echo $image->getUrlLarge(); ?>"
-           <?php
-           if ($show_captions) {
-               echo 'title="'.h($image->getCaption()).'"';
-           }
-           ?>>
-            <div class="image">
-                <img src="<?php echo $image->getUrlSmall() ?>"
-                     alt="<?php echo h($image->getAlt()); ?>"/>
-            </div>
-        </a>
+    </div>
+
+    <?php
+    if (isset($pagination)) {
+        ?>
+        <div class="ttg-pagination">
+            <?php
+            echo $pagination;
+            ?>
+        </div>
         <?php
     }
     ?>
