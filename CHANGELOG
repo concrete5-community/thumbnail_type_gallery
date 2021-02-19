@@ -1,0 +1,17 @@
+1.1.1
+- Update package and block icon.
+
+1.1
+- Add pagination support.
+- Add setting to define number of images per page.
+- Change block icon.
+
+1.0
+- Approved by PRB.
+
+0.9.1
+- Add thumbnail sizes to block settings dialog.
+- Rename .js file for clarity.
+
+0.9.0
+- PRB submission.
